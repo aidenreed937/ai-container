@@ -1,6 +1,6 @@
 # ai-container
 
-一个配置完善的 AI 全栈开发容器环境,集成了 OpenAI Codex 和 Google Gemini CLI 工具。
+一个配置完善的 AI 全栈开发容器环境，集成了 OpenAI Codex、Google Gemini、Anthropic Claude Code 等常用 AI CLI 工具。
 
 ## 📋 项目简介
 
@@ -12,6 +12,7 @@
 - **AI 工具集成**: 
   - OpenAI Codex CLI (`@openai/codex`)
   - Google Gemini CLI (`@google/gemini-cli`)
+  - Claude Code (`@anthropic-ai/claude-code`)
 - **VS Code 优化配置**:
   - ESLint 代码检查
   - Prettier 代码格式化
@@ -24,7 +25,7 @@
 
 - [Docker](https://www.docker.com/products/docker-desktop)
 - [Visual Studio Code](https://code.visualstudio.com/)
-- [Dev Containers 扩展](https://marketplace.visualstudio.com/items? itemName=ms-vscode-remote.remote-containers)
+- [Dev Containers 扩展](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
 ## 📦 快速开始
 
@@ -36,10 +37,13 @@
 
 2. **配置环境变量**
    
-   在 `.devcontainer/` 目录下创建 `.env` 文件,添加必要的 API 密钥:
+   在 `.devcontainer/` 目录下创建 `.env` 文件（参考 `.env.example`），添加必要的 API 密钥/可选 Base URL：
    ```env
-   OPENAI_API_KEY=your_openai_api_key
    GEMINI_API_KEY=your_gemini_api_key
+   GOOGLE_GEMINI_BASE_URL=your_gemini_base_url
+   CODEX_API_KEY=your_codex_key
+   ANTHROPIC_API_KEY=your_claude_key
+   ANTHROPIC_BASE_URL=your_anthropic_base_url
    ```
 
 3. **在容器中打开**
@@ -58,8 +62,9 @@
 ```
 ai-container/
 ├── .devcontainer/          # Dev Container 配置目录
-│   ├── devcontainer. json   # 容器配置文件
-│   └── .env               # 环境变量配置 (需自行创建)
+│   ├── devcontainer.json   # 容器配置文件
+│   ├── .env.example        # 环境变量示例
+│   └── .env                # 环境变量配置 (需自行创建)
 ├── .gitignore             # Git 忽略文件配置
 ├── demo/                  # 示例代码目录
 └── README.md              # 项目说明文档
@@ -69,12 +74,13 @@ ai-container/
 
 ### Dev Container 配置
 
-- **基础镜像**: `mcr.microsoft.com/devcontainers/javascript-node: 1-20`
+- **基础镜像**: `mcr.microsoft.com/devcontainers/javascript-node:1-20`
 - **默认用户**: `node`
 - **默认端口**: `3000`
 - **数据挂载**: 
   - `.codex` → `/home/node/.codex`
   - `.gemini` → `/home/node/.gemini`
+  - `.claude` → `/home/node/.claude`
 
 ### VS Code 扩展
 
@@ -86,7 +92,7 @@ ai-container/
 ## 💡 使用建议
 
 1. 将 API 密钥存储在 `.devcontainer/.env` 文件中,不要提交到版本控制
-2. `.codex` 和 `.gemini` 目录用于存储 AI 工具的配置和缓存,已添加到 `.gitignore`
+2. `.codex`、`.gemini`、`.claude` 目录用于存储 AI 工具的配置和缓存,已添加到 `.gitignore`
 3. 可以在 `demo/` 目录下创建测试和示例代码
 4. 根据项目需求,可以在 `devcontainer.json` 中添加更多 VS Code 扩展
 
