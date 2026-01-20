@@ -1,0 +1,20 @@
+# Example Codex CLI configuration (safe to commit).
+#
+# Important: keep secrets out of this file.
+# Use the standard env var name inside the container (e.g. CODEX_API_KEY),
+# and map it from a prefixed host env var via `.devcontainer/devcontainer.json`.
+#
+# Host:      AI_CONTAINER_CODEX_API_KEY=...
+# Container: CODEX_API_KEY=<mapped>
+
+model_provider = "coultra"
+model = "gpt-5.2"
+model_reasoning_effort = "high"
+disable_response_storage = true
+
+[model_providers.coultra]
+name = "GPTMeta Pro API (OpenAI-compatible)"
+base_url = "https://coultra.blueshirtmap.com/v1"
+env_key = "CODEX_API_KEY"
+wire_api = "chat"
+

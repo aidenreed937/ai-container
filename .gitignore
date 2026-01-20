@@ -1,4 +1,5 @@
 .devcontainer/.env
 .codex/*
+!.codex/config.toml.example
 .gemini/*
 .claude/*

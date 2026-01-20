@@ -101,6 +101,16 @@ ai-container/
 - **Prettier**: 代码格式化工具
 - **Material Icon Theme**: 文件图标美化
 
+### Codex Provider（env_key 推荐写法）
+
+建议在 Codex 的 provider 配置中使用容器内标准变量名，例如：
+- `env_key = "CODEX_API_KEY"`
+
+并在宿主机仅设置带前缀的变量（避免冲突）：
+- `AI_CONTAINER_CODEX_API_KEY=...`
+
+仓库提供示例文件：`.codex/config.toml.example`（可按需复制为 `.codex/config.toml`）。
+
 ## 💡 使用建议
 
 1. 优先用宿主机环境变量（`AI_CONTAINER_*`）管理 API 密钥，不落盘到仓库
