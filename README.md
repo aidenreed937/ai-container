@@ -37,10 +37,10 @@
 
 2. **配置环境变量**
    
-   推荐使用 **宿主机环境变量**（不落盘到仓库），Dev Container 会将其注入容器环境：
-   - `CODEX_API_KEY`
-   - `GEMINI_API_KEY`（可选：`GOOGLE_GEMINI_BASE_URL`）
-   - `ANTHROPIC_API_KEY`（可选：`ANTHROPIC_BASE_URL`）
+   推荐使用 **宿主机环境变量**（不落盘到仓库），并使用统一前缀避免与宿主机现有变量冲突；Dev Container 会将其注入容器环境（映射为工具可识别的标准变量名）：
+   - `AI_CONTAINER_CODEX_API_KEY`
+   - `AI_CONTAINER_GEMINI_API_KEY`（可选：`AI_CONTAINER_GOOGLE_GEMINI_BASE_URL`）
+   - `AI_CONTAINER_ANTHROPIC_API_KEY`（可选：`AI_CONTAINER_ANTHROPIC_BASE_URL`）
 
    也可以在 `.devcontainer/` 目录下创建 `.env` 文件（参考 `.env.example`）用于本地管理，但不要提交到版本控制。
    ```env
