@@ -50,6 +50,10 @@
    ```bash
    ./scripts/init-host-env.sh
    ```
+   Fish 用户：
+   ```bash
+   ./scripts/init-host-env.fish
+   ```
 
 3. **在容器中打开**
    
