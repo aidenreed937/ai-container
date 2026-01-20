@@ -1,12 +1,12 @@
 # Example Codex CLI configuration (safe to commit).
 #
-# This file is aligned to `.codex/config.toml` in this repo, but without secrets.
+# This template uses `env_key` to read the API key from the container environment.
 # Prefer mapping prefixed host vars into standard container vars via `.devcontainer/devcontainer.json`.
 #
 # Host:      AI_CONTAINER_CODEX_API_KEY=...
 # Container: CODEX_API_KEY=<mapped>
 
-model_provider = "right"
+model_provider = "coultra"
 model = "gpt-5.2"
 model_reasoning_effort = "high"
 disable_response_storage = true
@@ -16,21 +16,13 @@ sandbox_mode = "danger-full-access"
 approval_policy = "never"
 network_access = "enabled"
 
-[model_providers.right]
-name = "right"
-base_url = "https://right.codes/codex/v1"
-wire_api = "responses"
-requires_openai_auth = true
+[model_providers.coultra]
+name = "GPTMeta Pro API (OpenAI-compatible)"
+base_url = "https://coultra.blueshirtmap.com/v1"
+env_key = "CODEX_API_KEY"
+wire_api = "chat"
 
 [features]
 unified_exec = true
 shell_snapshot = true
 steer = true
-
-# Optional: OpenAI-compatible provider using an explicit env var key.
-#
-# [model_providers.coultra]
-# name = "GPTMeta Pro API (OpenAI-compatible)"
-# base_url = "https://coultra.blueshirtmap.com/v1"
-# env_key = "CODEX_API_KEY"
-# wire_api = "chat"
