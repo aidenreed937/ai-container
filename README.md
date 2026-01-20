@@ -77,6 +77,25 @@
    
    容器启动后,所有工具将自动安装配置完成,您可以立即开始使用 AI 辅助开发功能。
 
+## 🧭 实际工作流程（主控 → 容器 Codex 执行）
+
+```mermaid
+flowchart TD
+  A[宿主机：配置 AI_CONTAINER_* 环境变量] --> B[宿主机：生成/新增 .devcontainer/prompts/<timestamp>-task.md]
+  B --> C[VS Code: Rebuild & Reopen in Container]
+  C --> D[容器 post-create: 安装 CLI/设置 PATH]
+  D --> E[容器 post-create: 选择最新 *-task.md]
+  E --> F[容器 codex exec: 无人值守执行任务]
+  F --> G[产物落盘到工作区（如 demo/...）]
+  F --> H[日志落盘 .ai-container/logs/bootstrap-*.log]
+  F --> I[写入 /home/node/.codex/bootstrap.last（避免重复执行同一任务）]
+```
+
+**建议操作**
+- **新增任务**：按时间前缀命名 `YYYYMMDD-HHMMSS-<name>-task.md` 放到 `.devcontainer/prompts/`，然后执行一次容器重建
+- **查看执行过程**：优先看 `.ai-container/logs/bootstrap-*.log`
+- **想重复跑同一任务**：删除容器内 `/home/node/.codex/bootstrap.last`，或新建一份内容不同的 `*-task.md`
+
 ## 📁 项目结构
 
 ```
