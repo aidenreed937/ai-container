@@ -20,7 +20,7 @@
   - Zsh 默认终端
 - **端口转发**: 自动转发 3000 端口用于 Web 开发
 - **持久化配置**: AI 工具配置文件挂载到本地,数据不丢失
-- **自动示例项目**: 容器初始化后通过 Codex 自动生成 `demo/react-ts-vite`（React + TypeScript + Vite，需设置 `AI_CONTAINER_CODEX_API_KEY`）
+- **自动示例项目**: 容器初始化后会运行最新的 bootstrap prompt（默认提供 React + TypeScript + Vite 示例，需设置 `AI_CONTAINER_CODEX_API_KEY`）
 
 ## 🛠️ 环境要求
 
@@ -57,9 +57,10 @@
    ```
 
    “主控分发提示词”（由宿主机决定要让容器内 Codex 执行什么）：
-   - 推荐：设置 `AI_CONTAINER_BOOTSTRAP_PROFILE=react-ts-vite`（使用仓库内 `.devcontainer/prompts/react-ts-vite.txt`）
-   - 或者：设置 `AI_CONTAINER_BOOTSTRAP_PROMPT_FILE=/path/to/prompt.txt`
-   - 或者：设置 `AI_CONTAINER_BOOTSTRAP_PROMPT=...`（短提示词）
+   - 默认：不设置任何 `AI_CONTAINER_BOOTSTRAP_*` 时，会从 `.devcontainer/prompts/` 读取**最新的** `*.txt` 并执行一次（记录在 `/home/node/.codex/bootstrap.last`）
+   - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROFILE=<name>`（使用 `.devcontainer/prompts/<name>.txt`）
+   - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROMPT_FILE=/path/to/prompt.txt`
+   - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROMPT=...`（短提示词）
 
 3. **在容器中打开**
    
