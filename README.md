@@ -46,6 +46,11 @@
    - `AI_CONTAINER_UNATTENDED=1`
    - `AI_CONTAINER_CLAUDE_UNATTENDED_FLAGS` / `AI_CONTAINER_CODEX_UNATTENDED_FLAGS` / `AI_CONTAINER_GEMINI_UNATTENDED_FLAGS`（参考 `.devcontainer/.env.example`）
 
+   快速初始化（会写入宿主机的持久化 env 文件，并自动在你的 shell rc 中 source；可重复运行覆盖更新）：
+   ```bash
+   ./scripts/init-host-env.sh
+   ```
+
 3. **在容器中打开**
    
    - 在 VS Code 中打开项目文件夹
@@ -68,6 +73,8 @@ ai-container/
 ├── .gitignore             # Git 忽略文件配置
 ├── demo/                  # 示例代码目录
 ├── scripts/               # 工具脚本
+│   ├── ai                 # 统一入口（可附加无人值守 flags）
+│   └── init-host-env.sh   # 初始化宿主机持久化环境变量
 └── README.md              # 项目说明文档
 ```
 
