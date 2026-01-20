@@ -20,7 +20,8 @@ network_access = "enabled"
 name = "GPTMeta Pro API (OpenAI-compatible)"
 base_url = "https://coultra.blueshirtmap.com/v1"
 env_key = "CODEX_API_KEY"
-wire_api = "chat"
+wire_api = "responses"
+requires_openai_auth = true
 
 [features]
 unified_exec = true

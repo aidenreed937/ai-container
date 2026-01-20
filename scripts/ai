@@ -26,6 +26,10 @@ fi
 tool="$1"
 shift
 
+script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+repo_root="$(CDPATH= cd -- "$script_dir/.." && pwd)"
+wrapper_bin="$repo_root/bin"
+
 unattended="${AI_CONTAINER_UNATTENDED:-}"
 
 case "$tool" in
@@ -48,10 +52,47 @@ case "$tool" in
     ;;
 esac
 
-if [ -n "$unattended" ] && [ -n "$default_flags" ]; then
-  # shellcheck disable=SC2086
-  exec "$cmd" $default_flags "$@"
+real_path_env=""
+if [ -n "${PATH:-}" ]; then
+  new_path=""
+  old_ifs="$IFS"
+  IFS=":"
+  for p in $PATH; do
+    if [ "$p" = "$wrapper_bin" ]; then
+      continue
+    fi
+    if [ -z "$new_path" ]; then
+      new_path="$p"
+    else
+      new_path="$new_path:$p"
+    fi
+  done
+  IFS="$old_ifs"
+  real_path_env="$new_path"
 fi
 
-exec "$cmd" "$@"
+resolve_real_cmd() {
+  if [ -n "$real_path_env" ]; then
+    PATH="$real_path_env" command -v "$cmd" 2>/dev/null || true
+  else
+    command -v "$cmd" 2>/dev/null || true
+  fi
+}
 
+real_cmd="$(resolve_real_cmd)"
+if [ -z "$real_cmd" ]; then
+  printf 'Command not found: %s\n' "$cmd" >&2
+  exit 127
+fi
+
+if [ "$real_cmd" = "$wrapper_bin/$cmd" ]; then
+  printf 'Refusing to recurse into wrapper: %s\n' "$real_cmd" >&2
+  exit 126
+fi
+
+if [ -n "$unattended" ] && [ -n "$default_flags" ]; then
+  # shellcheck disable=SC2086
+  exec "$real_cmd" $default_flags "$@"
+fi
+
+exec "$real_cmd" "$@"
