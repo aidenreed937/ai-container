@@ -37,7 +37,12 @@
 
 2. **配置环境变量**
    
-   在 `.devcontainer/` 目录下创建 `.env` 文件（参考 `.env.example`），添加必要的 API 密钥/可选 Base URL：
+   推荐使用 **宿主机环境变量**（不落盘到仓库），Dev Container 会将其注入容器环境：
+   - `CODEX_API_KEY`
+   - `GEMINI_API_KEY`（可选：`GOOGLE_GEMINI_BASE_URL`）
+   - `ANTHROPIC_API_KEY`（可选：`ANTHROPIC_BASE_URL`）
+
+   也可以在 `.devcontainer/` 目录下创建 `.env` 文件（参考 `.env.example`）用于本地管理，但不要提交到版本控制。
    ```env
    GEMINI_API_KEY=your_gemini_api_key
    GOOGLE_GEMINI_BASE_URL=your_gemini_base_url

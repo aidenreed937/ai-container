@@ -2,6 +2,13 @@
   "name": "AI Full-Stack Env",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20",
   "postCreateCommand": "sh .devcontainer/post-create.sh",
+  "containerEnv": {
+    "CODEX_API_KEY": "${localEnv:CODEX_API_KEY}",
+    "GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
+    "GOOGLE_GEMINI_BASE_URL": "${localEnv:GOOGLE_GEMINI_BASE_URL}",
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "ANTHROPIC_BASE_URL": "${localEnv:ANTHROPIC_BASE_URL}"
+  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -15,7 +22,6 @@
     }
   },
   "forwardPorts": [3000],
-  "runArgs": ["--env-file", ".devcontainer/.env"],
   "remoteUser": "node",
   "mounts": [
     "source=${localWorkspaceFolder}/.codex,target=/home/node/.codex,type=bind",

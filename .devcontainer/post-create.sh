@@ -19,6 +19,28 @@ ensure_owned_by_node() {
   fi
 }
 
+npm_setup_user_global_prefix() {
+  npm_global_prefix="/home/node/.npm-global"
+  ensure_dir "$npm_global_prefix"
+
+  npm config set prefix "$npm_global_prefix" >/dev/null 2>&1 || true
+
+  ensure_path_line='export PATH="/home/node/.npm-global/bin:$PATH"'
+  if [ -f /home/node/.profile ] && grep -F "$ensure_path_line" /home/node/.profile >/dev/null 2>&1; then
+    :
+  else
+    printf '\n%s\n' "$ensure_path_line" >> /home/node/.profile
+  fi
+
+  if [ -f /home/node/.zshrc ] && grep -F "$ensure_path_line" /home/node/.zshrc >/dev/null 2>&1; then
+    :
+  else
+    printf '\n%s\n' "$ensure_path_line" >> /home/node/.zshrc
+  fi
+
+  export PATH="/home/node/.npm-global/bin:$PATH"
+}
+
 npm_install_global() {
   package_name="$1"
   npm install -g "$package_name"
@@ -40,6 +62,8 @@ main() {
   ensure_owned_by_node /home/node/.codex
   ensure_owned_by_node /home/node/.gemini
   ensure_owned_by_node /home/node/.claude
+
+  npm_setup_user_global_prefix
 
   npm_install_global @google/gemini-cli
   npm_install_global @openai/codex
