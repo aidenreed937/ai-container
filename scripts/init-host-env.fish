@@ -47,7 +47,10 @@ set -l vars \
     AI_CONTAINER_UNATTENDED \
     AI_CONTAINER_CLAUDE_UNATTENDED_FLAGS \
     AI_CONTAINER_CODEX_UNATTENDED_FLAGS \
-    AI_CONTAINER_GEMINI_UNATTENDED_FLAGS
+    AI_CONTAINER_GEMINI_UNATTENDED_FLAGS \
+    AI_CONTAINER_BOOTSTRAP_PROFILE \
+    AI_CONTAINER_BOOTSTRAP_PROMPT_FILE \
+    AI_CONTAINER_BOOTSTRAP_PROMPT
 
 mkdir -p (dirname "$env_file")
 mkdir -p "$confd_dir"
@@ -99,4 +102,3 @@ echo "Done."
 echo "To apply in current shell, run:"
 echo "  source \"$env_file\""
 echo "Or restart your terminal."
-

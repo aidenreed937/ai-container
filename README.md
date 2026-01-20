@@ -56,6 +56,11 @@
    ./scripts/init-host-env.fish
    ```
 
+   “主控分发提示词”（由宿主机决定要让容器内 Codex 执行什么）：
+   - 推荐：设置 `AI_CONTAINER_BOOTSTRAP_PROFILE=react-ts-vite`（使用仓库内 `.devcontainer/prompts/react-ts-vite.txt`）
+   - 或者：设置 `AI_CONTAINER_BOOTSTRAP_PROMPT_FILE=/path/to/prompt.txt`
+   - 或者：设置 `AI_CONTAINER_BOOTSTRAP_PROMPT=...`（短提示词）
+
 3. **在容器中打开**
    
    - 在 VS Code 中打开项目文件夹

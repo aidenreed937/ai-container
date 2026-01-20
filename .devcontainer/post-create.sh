@@ -90,19 +90,49 @@ codex_scaffold_react_ts_vite() {
   fi
 
   if ! command -v codex >/dev/null 2>&1; then
-    log "Codex not found; skipping example scaffold."
+    log "Codex not found; skipping bootstrap."
     return 0
   fi
 
   if [ -z "${CODEX_API_KEY:-}" ]; then
-    log "CODEX_API_KEY not set; skipping Codex scaffold."
+    log "CODEX_API_KEY not set; skipping bootstrap."
     return 0
   fi
 
-  log "Scaffolding demo/react-ts-vite via Codex (unattended)..."
-  codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo_root" \
-    "创建了reat+ts+vite的项目例子。\n\n请在仓库内创建示例项目目录：demo/react-ts-vite\n要求：\n- 使用命令：npm create vite@latest react-ts-vite -- --template react-ts --no-interactive（在 demo/ 目录执行）\n- 然后在 demo/react-ts-vite 下执行：npm install 与 npm run build\n- 不要修改 demo/react-ts-vite 之外的任何文件\n- 如果目录已存在则不重复创建" \
-    "true"
+  if [ -z "${AI_CONTAINER_UNATTENDED:-}" ]; then
+    log "AI_CONTAINER_UNATTENDED not set; skipping bootstrap."
+    return 0
+  fi
+
+  prompt=""
+
+  if [ -n "${AI_CONTAINER_BOOTSTRAP_PROMPT:-}" ]; then
+    prompt="${AI_CONTAINER_BOOTSTRAP_PROMPT}"
+  fi
+
+  if [ -n "${AI_CONTAINER_BOOTSTRAP_PROMPT_FILE:-}" ] && [ -f "${AI_CONTAINER_BOOTSTRAP_PROMPT_FILE}" ]; then
+    prompt="$(cat "${AI_CONTAINER_BOOTSTRAP_PROMPT_FILE}")"
+  fi
+
+  if [ -n "${AI_CONTAINER_BOOTSTRAP_PROFILE:-}" ] && [ -z "$prompt" ]; then
+    profile_file="$repo_root/.devcontainer/prompts/${AI_CONTAINER_BOOTSTRAP_PROFILE}.txt"
+    if [ -f "$profile_file" ]; then
+      prompt="$(cat "$profile_file")"
+    else
+      log "Bootstrap profile not found: $profile_file"
+      return 0
+    fi
+  fi
+
+  if [ -z "$prompt" ]; then
+    log "No bootstrap prompt provided; skipping."
+    return 0
+  fi
+
+  log "Running Codex bootstrap (unattended)..."
+  if ! codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo_root" "$prompt" "true"; then
+    log "Codex bootstrap failed; continuing without blocking container startup."
+  fi
 }
 
 main() {
