@@ -97,6 +97,7 @@ ai-container/
 3. 可以在 `demo/` 目录下创建测试和示例代码
 4. 根据项目需求,可以在 `devcontainer.json` 中添加更多 VS Code 扩展
 5. 建议用 `scripts/ai` 运行三方 CLI（可统一“无人值守” flags）：`scripts/ai codex ...` / `scripts/ai gemini ...` / `scripts/ai claude ...`
+6. 容器初始化后会把工作区 `bin/` 加入 `PATH`，`codex`/`gemini`/`claude` 默认会走本仓库的 shim（内部转到 `scripts/ai`），从而自动套用无人值守 flags（由 `AI_CONTAINER_UNATTENDED` 控制）
 
 ## 🤝 贡献
 

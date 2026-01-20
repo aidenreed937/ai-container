@@ -41,6 +41,32 @@ npm_setup_user_global_prefix() {
   export PATH="/home/node/.npm-global/bin:$PATH"
 }
 
+shell_add_path_if_missing() {
+  target_file="$1"
+  path_line="$2"
+
+  if [ -f "$target_file" ] && grep -F "$path_line" "$target_file" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  printf '\n%s\n' "$path_line" >> "$target_file"
+}
+
+workspace_setup_bin_path() {
+  workspace_dir="$(pwd)"
+  workspace_bin="$workspace_dir/bin"
+
+  if [ ! -d "$workspace_bin" ]; then
+    return 0
+  fi
+
+  path_line="export PATH=\"$workspace_bin:\$PATH\""
+  shell_add_path_if_missing /home/node/.profile "$path_line"
+  shell_add_path_if_missing /home/node/.zshrc "$path_line"
+
+  export PATH="$workspace_bin:$PATH"
+}
+
 npm_install_global() {
   package_name="$1"
   npm install -g "$package_name"
@@ -64,6 +90,7 @@ main() {
   ensure_owned_by_node /home/node/.claude
 
   npm_setup_user_global_prefix
+  workspace_setup_bin_path
 
   npm_install_global @google/gemini-cli
   npm_install_global @openai/codex
