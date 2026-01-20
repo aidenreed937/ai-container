@@ -1,0 +1,57 @@
+#!/bin/sh
+set -eu
+
+usage() {
+  cat <<'EOF'
+Usage:
+  scripts/ai <tool> [args...]
+
+Tools:
+  codex | gemini | claude
+
+Unattended mode:
+  Set AI_CONTAINER_UNATTENDED=1 on the host.
+  Optional per-tool flags:
+    AI_CONTAINER_CODEX_UNATTENDED_FLAGS
+    AI_CONTAINER_GEMINI_UNATTENDED_FLAGS
+    AI_CONTAINER_CLAUDE_UNATTENDED_FLAGS
+EOF
+}
+
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ] || [ $# -lt 1 ]; then
+  usage
+  exit 0
+fi
+
+tool="$1"
+shift
+
+unattended="${AI_CONTAINER_UNATTENDED:-}"
+
+case "$tool" in
+  codex)
+    cmd="codex"
+    default_flags="${AI_CONTAINER_CODEX_UNATTENDED_FLAGS:-}"
+    ;;
+  gemini)
+    cmd="gemini"
+    default_flags="${AI_CONTAINER_GEMINI_UNATTENDED_FLAGS:-}"
+    ;;
+  claude)
+    cmd="claude"
+    default_flags="${AI_CONTAINER_CLAUDE_UNATTENDED_FLAGS:-}"
+    ;;
+  *)
+    printf 'Unknown tool: %s\n\n' "$tool" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
+
+if [ -n "$unattended" ] && [ -n "$default_flags" ]; then
+  # shellcheck disable=SC2086
+  exec "$cmd" $default_flags "$@"
+fi
+
+exec "$cmd" "$@"
+

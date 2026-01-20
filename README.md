@@ -42,14 +42,9 @@
    - `AI_CONTAINER_GEMINI_API_KEY`（可选：`AI_CONTAINER_GOOGLE_GEMINI_BASE_URL`）
    - `AI_CONTAINER_ANTHROPIC_API_KEY`（可选：`AI_CONTAINER_ANTHROPIC_BASE_URL`）
 
-   也可以在 `.devcontainer/` 目录下创建 `.env` 文件（参考 `.env.example`）用于本地管理，但不要提交到版本控制。
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key
-   GOOGLE_GEMINI_BASE_URL=your_gemini_base_url
-   CODEX_API_KEY=your_codex_key
-   ANTHROPIC_API_KEY=your_claude_key
-   ANTHROPIC_BASE_URL=your_anthropic_base_url
-   ```
+   如需“无人值守”（减少/避免交互确认），可在宿主机额外设置：
+   - `AI_CONTAINER_UNATTENDED=1`
+   - `AI_CONTAINER_CLAUDE_UNATTENDED_FLAGS` / `AI_CONTAINER_CODEX_UNATTENDED_FLAGS` / `AI_CONTAINER_GEMINI_UNATTENDED_FLAGS`（参考 `.devcontainer/.env.example`）
 
 3. **在容器中打开**
    
@@ -72,6 +67,7 @@ ai-container/
 │   └── .env                # 环境变量配置 (需自行创建)
 ├── .gitignore             # Git 忽略文件配置
 ├── demo/                  # 示例代码目录
+├── scripts/               # 工具脚本
 └── README.md              # 项目说明文档
 ```
 
@@ -96,10 +92,11 @@ ai-container/
 
 ## 💡 使用建议
 
-1. 将 API 密钥存储在 `.devcontainer/.env` 文件中,不要提交到版本控制
+1. 优先用宿主机环境变量（`AI_CONTAINER_*`）管理 API 密钥，不落盘到仓库
 2. `.codex`、`.gemini`、`.claude` 目录用于存储 AI 工具的配置和缓存,已添加到 `.gitignore`
 3. 可以在 `demo/` 目录下创建测试和示例代码
 4. 根据项目需求,可以在 `devcontainer.json` 中添加更多 VS Code 扩展
+5. 建议用 `scripts/ai` 运行三方 CLI（可统一“无人值守” flags）：`scripts/ai codex ...` / `scripts/ai gemini ...` / `scripts/ai claude ...`
 
 ## 🤝 贡献
 
