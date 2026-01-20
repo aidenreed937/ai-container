@@ -139,7 +139,7 @@ run_and_tee() {
   tmp_file="$(mktemp)"
   "$@" >"$tmp_file" 2>&1
   rc=$?
-  cat "$tmp_file" | tee -a "$LOG_FILE" >/dev/null
+  cat "$tmp_file" | tee -a "$LOG_FILE"
   rm -f "$tmp_file"
   return $rc
 }
@@ -148,21 +148,6 @@ codex_run_latest_bootstrap_prompt() {
   repo_root="$(pwd)"
 
   init_bootstrap_logging
-
-  if ! command -v codex >/dev/null 2>&1; then
-    log "Codex not found; skipping bootstrap."
-    return 0
-  fi
-
-  if [ -z "${CODEX_API_KEY:-}" ]; then
-    log "CODEX_API_KEY not set; skipping bootstrap."
-    return 0
-  fi
-
-  if [ -z "${AI_CONTAINER_UNATTENDED:-}" ]; then
-    log "AI_CONTAINER_UNATTENDED not set; skipping bootstrap."
-    return 0
-  fi
 
   prompt=""
   prompt_source=""
@@ -178,23 +163,33 @@ codex_run_latest_bootstrap_prompt() {
   fi
 
   if [ -n "${AI_CONTAINER_BOOTSTRAP_PROFILE:-}" ] && [ -z "$prompt" ]; then
-    profile_file="$repo_root/.devcontainer/prompts/${AI_CONTAINER_BOOTSTRAP_PROFILE}.txt"
-    if [ -f "$profile_file" ]; then
-      prompt="$(cat "$profile_file")"
-      prompt_source="$profile_file"
+    profile_base="$repo_root/.devcontainer/prompts/${AI_CONTAINER_BOOTSTRAP_PROFILE}"
+    profile_file=""
+    if [ -f "${profile_base}.txt" ]; then
+      profile_file="${profile_base}.txt"
+    elif [ -f "${profile_base}.md" ]; then
+      profile_file="${profile_base}.md"
     else
-      log "Bootstrap profile not found: $profile_file"
+      log "Bootstrap profile not found: ${profile_base}.(txt|md)"
       return 0
     fi
+    prompt="$(cat "$profile_file")"
+    prompt_source="$profile_file"
   fi
 
   if [ -z "$prompt" ]; then
     prompt_dir="$repo_root/.devcontainer/prompts"
     latest_file=""
     if [ -d "$prompt_dir" ]; then
-      latest_file="$(ls -1 "$prompt_dir"/[0-9]*.txt 2>/dev/null | sort | tail -n 1 || true)"
+      latest_file="$(
+        for f in "$prompt_dir"/[0-9]*.md "$prompt_dir"/[0-9]*.txt; do
+          if [ -f "$f" ]; then
+            printf '%s\n' "$f"
+          fi
+        done | sort | tail -n 1
+      )"
       if [ -z "$latest_file" ]; then
-        latest_file="$(ls -1t "$prompt_dir"/*.txt 2>/dev/null | head -n 1 || true)"
+        latest_file="$(ls -1t "$prompt_dir"/*.md "$prompt_dir"/*.txt 2>/dev/null | head -n 1 || true)"
       fi
     fi
     if [ -n "$latest_file" ] && [ -f "$latest_file" ]; then
@@ -205,6 +200,23 @@ codex_run_latest_bootstrap_prompt() {
 
   if [ -z "$prompt" ]; then
     log "No bootstrap prompt provided; skipping."
+    return 0
+  fi
+
+  log "Selected bootstrap prompt: $prompt_source"
+
+  if ! command -v codex >/dev/null 2>&1; then
+    log "Codex not found; skipping bootstrap."
+    return 0
+  fi
+
+  if [ -z "${CODEX_API_KEY:-}" ]; then
+    log "CODEX_API_KEY not set; skipping bootstrap."
+    return 0
+  fi
+
+  if [ -z "${AI_CONTAINER_UNATTENDED:-}" ]; then
+    log "AI_CONTAINER_UNATTENDED not set; skipping bootstrap."
     return 0
   fi
 
