@@ -1,0 +1,24 @@
+{
+  "name": "AI Full-Stack Env",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20",
+  "postCreateCommand": "sudo chown -R node:node /home/node/.codex /home/node/.gemini && npm install -g @google/gemini-cli @openai/codex",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "pkief.material-icon-theme"
+      ]
+    }
+  },
+  "forwardPorts": [3000],
+  "runArgs": ["--env-file", ".devcontainer/.env"],
+  "remoteUser": "node",
+  "mounts": [
+    "source=${localWorkspaceFolder}/.codex,target=/home/node/.codex,type=bind",
+    "source=${localWorkspaceFolder}/.gemini,target=/home/node/.gemini,type=bind"
+  ]
+}
