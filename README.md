@@ -20,6 +20,7 @@
   - Zsh 默认终端
 - **端口转发**: 自动转发 3000 端口用于 Web 开发
 - **持久化配置**: AI 工具配置文件挂载到本地,数据不丢失
+- **自动示例项目**: 容器初始化后通过 Codex 自动生成 `demo/react-ts-vite`（React + TypeScript + Vite，需设置 `AI_CONTAINER_CODEX_API_KEY`）
 
 ## 🛠️ 环境要求
 

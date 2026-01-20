@@ -3,3 +3,4 @@
 !.codex/config.toml.example
 .gemini/*
 .claude/*
+demo/react-ts-vite/

@@ -80,6 +80,31 @@ npm_install_global_optional() {
   log "Skipping optional install: $package_name"
 }
 
+codex_scaffold_react_ts_vite() {
+  repo_root="$(pwd)"
+  example_dir="$repo_root/demo/react-ts-vite"
+
+  if [ -f "$example_dir/package.json" ]; then
+    log "Example already exists: demo/react-ts-vite"
+    return 0
+  fi
+
+  if ! command -v codex >/dev/null 2>&1; then
+    log "Codex not found; skipping example scaffold."
+    return 0
+  fi
+
+  if [ -z "${CODEX_API_KEY:-}" ]; then
+    log "CODEX_API_KEY not set; skipping Codex scaffold."
+    return 0
+  fi
+
+  log "Scaffolding demo/react-ts-vite via Codex (unattended)..."
+  codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo_root" \
+    "创建了reat+ts+vite的项目例子。\n\n请在仓库内创建示例项目目录：demo/react-ts-vite\n要求：\n- 使用命令：npm create vite@latest react-ts-vite -- --template react-ts --no-interactive（在 demo/ 目录执行）\n- 然后在 demo/react-ts-vite 下执行：npm install 与 npm run build\n- 不要修改 demo/react-ts-vite 之外的任何文件\n- 如果目录已存在则不重复创建" \
+    "true"
+}
+
 main() {
   ensure_dir /home/node/.codex
   ensure_dir /home/node/.gemini
@@ -95,6 +120,8 @@ main() {
   npm_install_global @google/gemini-cli
   npm_install_global @openai/codex
   npm_install_global_optional @anthropic-ai/claude-code
+
+  codex_scaffold_react_ts_vite
 }
 
 main "$@"
