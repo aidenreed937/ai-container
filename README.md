@@ -62,6 +62,10 @@
    - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROMPT_FILE=/path/to/prompt.txt`
    - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROMPT=...`（短提示词）
 
+   执行日志：
+   - 默认写入：`.ai-container/logs/bootstrap-<timestamp>.log`（每次执行生成一份，按时间回溯）
+   - 可选覆盖目录：`AI_CONTAINER_LOG_DIR=/some/path`
+
 3. **在容器中打开**
    
    - 在 VS Code 中打开项目文件夹

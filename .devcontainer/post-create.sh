@@ -1,8 +1,19 @@
 #!/bin/sh
 set -eu
 
+LOG_FILE=""
+
 log() {
-  printf '%s\n' "$*"
+  msg="$*"
+  printf '%s\n' "$msg"
+  if [ -n "${LOG_FILE:-}" ]; then
+    ts="$(date '+%Y-%m-%d %H:%M:%S' 2>/dev/null || true)"
+    if [ -n "$ts" ]; then
+      printf '%s %s\n' "$ts" "$msg" >>"$LOG_FILE" 2>/dev/null || true
+    else
+      printf '%s\n' "$msg" >>"$LOG_FILE" 2>/dev/null || true
+    fi
+  fi
 }
 
 ensure_dir() {
@@ -101,8 +112,42 @@ sha256_of_stdin() {
   return 1
 }
 
+init_bootstrap_logging() {
+  if [ -n "${LOG_FILE:-}" ]; then
+    return 0
+  fi
+
+  repo_root="$(pwd)"
+  log_dir="${AI_CONTAINER_LOG_DIR:-$repo_root/.ai-container/logs}"
+
+  ensure_dir "$log_dir"
+
+  ts="$(date '+%Y%m%d-%H%M%S' 2>/dev/null || echo unknown)"
+  LOG_FILE="$log_dir/bootstrap-$ts.log"
+  : >"$LOG_FILE"
+  chmod 600 "$LOG_FILE" 2>/dev/null || true
+
+  log "Bootstrap log: $LOG_FILE"
+}
+
+run_and_tee() {
+  if [ -z "${LOG_FILE:-}" ]; then
+    "$@"
+    return $?
+  fi
+
+  tmp_file="$(mktemp)"
+  "$@" >"$tmp_file" 2>&1
+  rc=$?
+  cat "$tmp_file" | tee -a "$LOG_FILE" >/dev/null
+  rm -f "$tmp_file"
+  return $rc
+}
+
 codex_run_latest_bootstrap_prompt() {
   repo_root="$(pwd)"
+
+  init_bootstrap_logging
 
   if ! command -v codex >/dev/null 2>&1; then
     log "Codex not found; skipping bootstrap."
@@ -147,7 +192,10 @@ codex_run_latest_bootstrap_prompt() {
     prompt_dir="$repo_root/.devcontainer/prompts"
     latest_file=""
     if [ -d "$prompt_dir" ]; then
-      latest_file="$(ls -1t "$prompt_dir"/*.txt 2>/dev/null | head -n 1 || true)"
+      latest_file="$(ls -1 "$prompt_dir"/[0-9]*.txt 2>/dev/null | sort | tail -n 1 || true)"
+      if [ -z "$latest_file" ]; then
+        latest_file="$(ls -1t "$prompt_dir"/*.txt 2>/dev/null | head -n 1 || true)"
+      fi
     fi
     if [ -n "$latest_file" ] && [ -f "$latest_file" ]; then
       prompt="$(cat "$latest_file")"
@@ -174,7 +222,7 @@ codex_run_latest_bootstrap_prompt() {
   fi
 
   log "Running Codex bootstrap (unattended): $prompt_source"
-  if ! codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo_root" "$prompt" "true"; then
+  if ! run_and_tee codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo_root" "$prompt" "true"; then
     log "Codex bootstrap failed; continuing without blocking container startup."
     return 0
   fi
