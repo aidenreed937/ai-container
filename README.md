@@ -57,9 +57,9 @@
    ```
 
    “主控分发提示词”（由宿主机决定要让容器内 Codex 执行什么）：
-   - 默认：不设置任何 `AI_CONTAINER_BOOTSTRAP_*` 时，会从 `.devcontainer/prompts/` 读取**最新的** prompt（优先 `[0-9]*.(md|txt)`，否则按 mtime 选 `*.(md|txt)`）并执行一次（记录在 `/home/node/.codex/bootstrap.last`）
-   - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROFILE=<name>`（使用 `.devcontainer/prompts/<name>.txt` 或 `.md`）
-   - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROMPT_FILE=/path/to/prompt.(txt|md)`
+   - 默认：不设置任何 `AI_CONTAINER_BOOTSTRAP_*` 时，会从 `.devcontainer/prompts/` 读取**最新的** `*-task.md`（优先 `[0-9]*-task.md` 按文件名顺序，否则按 mtime）并执行一次（记录在 `/home/node/.codex/bootstrap.last`）
+   - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROFILE=<name>`（使用 `.devcontainer/prompts/<name>.md`）
+   - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROMPT_FILE=/path/to/prompt.md`
    - 覆盖：`AI_CONTAINER_BOOTSTRAP_PROMPT=...`（短提示词）
 
    执行日志：

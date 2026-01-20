@@ -1,5 +1,6 @@
 .devcontainer/.env
 .devcontainer/prompts/[0-9]*-task.md
+.devcontainer/prompts/*.txt
 .codex/*
 !.codex/config.toml.example
 .gemini/*

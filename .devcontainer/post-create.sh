@@ -164,13 +164,9 @@ codex_run_latest_bootstrap_prompt() {
 
   if [ -n "${AI_CONTAINER_BOOTSTRAP_PROFILE:-}" ] && [ -z "$prompt" ]; then
     profile_base="$repo_root/.devcontainer/prompts/${AI_CONTAINER_BOOTSTRAP_PROFILE}"
-    profile_file=""
-    if [ -f "${profile_base}.txt" ]; then
-      profile_file="${profile_base}.txt"
-    elif [ -f "${profile_base}.md" ]; then
-      profile_file="${profile_base}.md"
-    else
-      log "Bootstrap profile not found: ${profile_base}.(txt|md)"
+    profile_file="${profile_base}.md"
+    if [ ! -f "$profile_file" ]; then
+      log "Bootstrap profile not found: $profile_file"
       return 0
     fi
     prompt="$(cat "$profile_file")"
@@ -182,14 +178,14 @@ codex_run_latest_bootstrap_prompt() {
     latest_file=""
     if [ -d "$prompt_dir" ]; then
       latest_file="$(
-        for f in "$prompt_dir"/[0-9]*.md "$prompt_dir"/[0-9]*.txt; do
+        for f in "$prompt_dir"/[0-9]*-task.md; do
           if [ -f "$f" ]; then
             printf '%s\n' "$f"
           fi
         done | sort | tail -n 1
       )"
       if [ -z "$latest_file" ]; then
-        latest_file="$(ls -1t "$prompt_dir"/*.md "$prompt_dir"/*.txt 2>/dev/null | head -n 1 || true)"
+        latest_file="$(ls -1t "$prompt_dir"/*-task.md 2>/dev/null | head -n 1 || true)"
       fi
     fi
     if [ -n "$latest_file" ] && [ -f "$latest_file" ]; then
