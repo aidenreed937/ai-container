@@ -210,8 +210,8 @@ codex_run_latest_bootstrap_prompt() {
     return 0
   fi
 
-  if [ -z "${CODEX_API_KEY:-}" ]; then
-    log "CODEX_API_KEY not set; skipping bootstrap."
+  if [ -z "${CODEX_API_KEY:-}" ] && [ ! -s "/home/node/.codex/auth.json" ]; then
+    log "No CODEX_API_KEY or /home/node/.codex/auth.json; skipping bootstrap."
     return 0
   fi
 
@@ -234,7 +234,7 @@ codex_run_latest_bootstrap_prompt() {
   fi
 
   log "Running Codex bootstrap (unattended): $prompt_source"
-  if ! run_and_tee codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo_root" "$prompt" "true"; then
+  if ! run_and_tee codex exec --dangerously-bypass-approvals-and-sandbox -C "$repo_root" -- "$prompt"; then
     log "Codex bootstrap failed; continuing without blocking container startup."
     return 0
   fi
